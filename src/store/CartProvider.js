@@ -3,6 +3,7 @@ import CardContext from "./cart-context";
 
 const ADD_CART_ITEM = "ADD_CART_ITEM";
 const REMOVE_CART_ITEM = "REMOVE_CART_ITEM";
+const CLEAR_CART = "CLEAR_CART";
 
 const defaultCartState = {
   items: [],
@@ -40,7 +41,6 @@ const cartReducer = (state, action) => {
       };
     }
     case REMOVE_CART_ITEM: {
-      
       const existingCartItemIndex = state.items.findIndex(
         (item) => item.id === action.id
       );
@@ -49,8 +49,9 @@ const cartReducer = (state, action) => {
       let updatedItem;
       let updatedItems;
 
-      if (existingCartItem.amount === 1){ // remove item entirely
-        updatedItems = state.items.filter(item => item.id !== action.id);
+      if (existingCartItem.amount === 1) {
+        // remove item entirely
+        updatedItems = state.items.filter((item) => item.id !== action.id);
       } else {
         updatedItem = {
           ...existingCartItem,
@@ -67,6 +68,10 @@ const cartReducer = (state, action) => {
         totalAmount: updatedTotalAmount,
       };
     }
+
+    case CLEAR_CART:
+      return defaultCartState;
+
     default:
       return state;
   }
@@ -94,11 +99,16 @@ const CartProvider = (props) => {
     });
   };
 
+  const clearCartHandler = () => {
+    dispatchCartAction({ type: CLEAR_CART });
+  };
+
   const cartContext = {
     items: cartState.items,
     totalAmount: cartState.totalAmount,
     addItem: addItemToCartHandler,
     removeItem: removeItemFromCartHandler,
+    clearCart: clearCartHandler,
   };
 
   return (
